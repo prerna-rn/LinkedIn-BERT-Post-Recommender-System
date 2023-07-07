@@ -1,7 +1,6 @@
 streamlit==1.24.0
 numpy==1.23.5
 plotly==4.14.3
-scipy>=1.5.2
 click==8.0.4
 wordcloud==1.9.2
 transformers==4.30.2
