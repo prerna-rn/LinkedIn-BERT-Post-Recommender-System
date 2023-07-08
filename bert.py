@@ -143,8 +143,8 @@ def main():
 
                     st.subheader(f"Similarity Score:")
                     st.write(f"Overall similarity between user interests and recommended interests: {overall_similarity:.2f}%")
-    else:
-        st.write("No data available.")
+    # else:
+    #     st.write("No data available.")
 
 if __name__ == '__main__':
     main()
