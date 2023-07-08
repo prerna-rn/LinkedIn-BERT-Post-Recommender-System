@@ -135,7 +135,7 @@ def main():
                 overall_similarity = np.mean(similarities) * 100
 
                 st.subheader(f"Recommended posts for {user_name}:")
-                st.write(recommendations[0])
+                st.write(recommendations)
 
                 st.subheader(f"Word Cloud of Recommended Posts for {user_name}:")
                 plt.figure(figsize=(10, 5))
@@ -147,18 +147,12 @@ def main():
                 st.subheader(f"Similarity Score:")
                 st.write(f"Overall similarity between user interests and recommended interests: {overall_similarity:.2f}%")
 
-    else:
-        st.write("Upload your own CSV file:")
-        uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
-
+    elif file_mode == "Upload your own CSV":
+        uploaded_file = st.file_uploader("Upload CSV file", type="csv")
         if uploaded_file is not None:
-            # Readthe uploaded CSV file
-            df = pd.read_csv(uploaded_file)
-
-            if 'df' in locals() and 'df' in globals():
-                # Clean data
-                df = df.dropna()
-                df = df.reset_index()
+            df = pd.read_csv(uploaded_file, engine="python")
+            df = df.dropna()
+            df = df.reset_index()
 
             # User input for name
             user_name = st.text_input("Enter a valid user name:")
@@ -194,7 +188,7 @@ def main():
                 overall_similarity = np.mean(similarities) * 100
 
                 st.subheader(f"Recommended posts for {user_name}:")
-                st.write(recommendations[0])
+                st.write(recommendations)
 
                 st.subheader(f"Word Cloud of Recommended Posts for {user_name}:")
                 plt.figure(figsize=(10, 5))
@@ -208,6 +202,9 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+
 
 
 # simple working
