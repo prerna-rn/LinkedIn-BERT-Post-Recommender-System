@@ -91,7 +91,6 @@ def extract_interests(text):
                  token.text.lower() not in STOP_WORDS and len(token.text) > 1 and token.text.strip()]
     return interests
 
-
 def main():
     st.markdown("Developed by Prerna Singh")
     # Title and description
@@ -201,7 +200,6 @@ def main():
 
                 st.subheader(f"Similarity Score:")
                 st.write(f"Overall similarity between user interests and recommended interests: {overall_similarity:.2f}%")
-
 
 if __name__ == '__main__':
     main()
