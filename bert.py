@@ -16,6 +16,8 @@ import spacy
 from spacy.lang.en.stop_words import STOP_WORDS
 import re
 from streamlit.components.v1 import html
+import spacy.cli
+spacy.cli.download("en_core_web_sm")
 
 warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib")
 st.set_option('deprecation.showPyplotGlobalUse', False)
