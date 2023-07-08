@@ -42,7 +42,7 @@ def main():
 
         # Step 2: Preprocess data
         tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-        model = BertModel.from_pretrained('bert-base-uncased', from_tf=True)
+        model = BertModel.from_pretrained('bert-base-uncased')
 
         def preprocess(text):
             text = str(text).replace('\n', ' ').replace('\r', '')
