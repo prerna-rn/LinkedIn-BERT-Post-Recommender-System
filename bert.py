@@ -36,7 +36,7 @@ def main():
     # Title and description
     st.write("Get post recommendations, word cloud and similarity score.")
     # User input for name
-    user_name = st.text_input("Enter a valid user name:")
+    user_name = st.text_input("Enter a valid user name from the dataset:")
     if user_name:
         # Step 1: Collect data
         df = pd.read_csv('influencers_data_cleaned2.csv', engine="python")
@@ -126,11 +126,6 @@ def main():
         st.subheader(f"Similarity Score:")
 
         st.write(f"Overall similarity between user interests and recommended interests: {overall_similarity:.2f}%")
-        
-
-    # Check if the username is valid
-    else:
-        st.write("Enter a user name from the dataset.")
                 
 if __name__ == '__main__':
     main()
