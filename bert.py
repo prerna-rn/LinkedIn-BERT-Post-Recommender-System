@@ -129,7 +129,7 @@ def main():
         
 
     # Check if the username is valid
-    if user_name not in df['name'].values:
+    else:
         st.write("Enter a user name from the dataset.")
                 
 if __name__ == '__main__':
