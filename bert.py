@@ -104,7 +104,7 @@ def main():
         df = load_default_data()
         if 'df' in locals() and 'df' in globals():
             # User input for name
-            user_name = st.text_input("Enter a valid user name from the dataset:")
+            user_name = st.selectbox("Select a user name:", df['name'].unique())
 
             if st.button("Recommend"):
                 post_embeddings = preprocess_data(df)
@@ -201,6 +201,7 @@ def main():
 
                 st.subheader(f"Similarity Score:")
                 st.write(f"Overall similarity between user interests and recommended interests: {overall_similarity:.2f}%")
+
 
 if __name__ == '__main__':
     main()
