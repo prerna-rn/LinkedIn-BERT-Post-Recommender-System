@@ -79,7 +79,7 @@ def preprocess_data(df):
     return post_embeddings
 
 
-def recommend_posts(user_name, post_embeddings, n=10):
+def recommend_posts(df, user_name, post_embeddings, n=10):
     user_posts = df[df['name'] == user_name]['content']
     user_post_embeddings = []
     for post in user_posts:
@@ -119,7 +119,7 @@ def main():
 
         if st.button("Recommend"):
             post_embeddings = preprocess_data(df)
-            recommendations = recommend_posts(user_name, post_embeddings, n=10)
+            recommendations = recommend_posts(df, user_name, post_embeddings, n=10)
             recommended_post_content = recommendations[0]['content'].values.tolist()
             wordcloud_text = ' '.join(recommended_post_content)
             wordcloud = WordCloud(width=800, height=400, background_color='white').generate(wordcloud_text)
@@ -168,7 +168,7 @@ def main():
 
             if st.button("Recommend"):
                 post_embeddings = preprocess_data(df)
-                recommendations = recommend_posts(user_name, post_embeddings, n=10)
+                recommendations = recommend_posts(df, user_name, post_embeddings, n=10)
                 recommended_post_content = recommendations[0]['content'].values.tolist()
                 wordcloud_text = ' '.join(recommended_post_content)
                 wordcloud = WordCloud(width=800, height=400, background_color='white').generate(wordcloud_text)
@@ -212,10 +212,6 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-
 
 # simple working
 
