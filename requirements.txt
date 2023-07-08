@@ -5,6 +5,7 @@ pandas
 numpy
 torch
 transformers
+tensorflow
 wordcloud
 matplotlib
 scikit-learn
