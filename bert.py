@@ -22,6 +22,8 @@ spacy.cli.download("en_core_web_sm")
 warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib")
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
+st.set_page_config(page_title='LinkedIn Post Rec')
+
 # insert lottie animation
 url = "https://assets1.lottiefiles.com/packages/lf20_ywt06tjx.json"
 response = requests.get(url)
