@@ -30,6 +30,7 @@ response = requests.get(url)
 st_lottie(response.json(), width=75, height=75)
 st.title("LinkedIn Influencer Post Recommendations")
 
+st.beta_set_page_config(footer_visibility="hidden")
 
 def main():
     # Title and description
