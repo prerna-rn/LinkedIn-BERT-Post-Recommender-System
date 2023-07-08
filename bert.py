@@ -29,7 +29,7 @@ response = requests.get(url)
 # Display the Lottie animation
 st_lottie(response.json(), width=75, height=75)
 st.title("LinkedIn Influencer Post Recommendations")
-st.set_page_config(footer="")
+
 
 def main():
     # Title and description
