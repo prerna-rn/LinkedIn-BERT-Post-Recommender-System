@@ -13,5 +13,5 @@ Screenshot of the application for user 2: Richard Branson
 ![Screenshot (472)](https://github.com/prerna-rn/LinkedIn-BERT-Post-Recommender-System/assets/97434896/ff941382-7a20-445a-855e-b4bbaf00c31a)
 ![Screenshot (473)](https://github.com/prerna-rn/LinkedIn-BERT-Post-Recommender-System/assets/97434896/4f922ed4-cc3e-4527-b898-64e89174f6da)
 
-Disclaimer: The application will suggest posts only for the users whose names are present in the dataset. Refer the csv file. The app will take some time to load the recommendations.
+⚠️ Disclaimer: The application will suggest posts only for the users whose names are present in the dataset. Refer the csv file. The app will take some time to load the recommendations.
 
