@@ -32,6 +32,7 @@ st.title("LinkedIn Influencer Post Recommendations")
 
 
 def main():
+    st.markdown("Developed by Prerna Singh")
     # Title and description
     st.write("Get post recommendations, word cloud and similarity score.")
     # User input for name
@@ -126,6 +127,10 @@ def main():
 
         st.write(f"Overall similarity between user interests and recommended interests: {overall_similarity:.2f}%")
         
-        st.markdown("Developed by Prerna Singh")
+
+    # Check if the username is valid
+    if user_name not in df['name'].values:
+        st.write("Enter a user name from the dataset.")
+                
 if __name__ == '__main__':
     main()
