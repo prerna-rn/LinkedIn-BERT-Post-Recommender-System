@@ -17,12 +17,11 @@ from spacy.lang.en.stop_words import STOP_WORDS
 import re
 from streamlit.components.v1 import html
 import spacy.cli
+
 spacy.cli.download("en_core_web_sm")
 
 warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib")
 st.set_option('deprecation.showPyplotGlobalUse', False)
-
-st.set_page_config(page_title='LinkedIn Post Rec')
 
 # insert lottie animation
 url = "https://assets1.lottiefiles.com/packages/lf20_ywt06tjx.json"
@@ -36,6 +35,18 @@ st.title("LinkedIn Influencer Post Recommendations")
 def load_default_data():
     # Load default CSV data
     df = pd.read_csv('influencers_data_cleaned2.csv', engine="python")
+
+    if 'df' in locals() and 'df' in globals():
+        # Clean data
+        df = df.dropna()
+        df = df.reset_index()
+
+    return df
+
+
+def load_user_data(file):
+    # Load user's own CSV data
+    df = pd.read_csv(file, engine="python")
 
     if 'df' in locals() and 'df' in globals():
         # Clean data
@@ -76,7 +87,7 @@ def recommend_posts(user_name, post_embeddings, n=10):
     user_post_embeddings = np.concatenate(user_post_embeddings, axis=0)
     user_profile_embedding = np.mean(user_post_embeddings, axis=0)
     similarity_scores = np.dot(post_embeddings, user_profile_embedding.T) / (
-                np.linalg.norm(post_embeddings, axis=1) * np.linalg.norm(user_profile_embedding))
+            np.linalg.norm(post_embeddings, axis=1) * np.linalg.norm(user_profile_embedding))
     rankings = np.argsort(np.ravel(similarity_scores))[::-1]
     user_post_ids = df[df['name'] == user_name].index
     recommended_post_ids = np.delete(rankings, np.where(np.isin(rankings, user_post_ids)))
@@ -91,72 +102,69 @@ def extract_interests(text):
                  token.text.lower() not in STOP_WORDS and len(token.text) > 1 and token.text.strip()]
     return interests
 
+
 def main():
     st.markdown("Developed by Prerna Singh")
     # Title and description
     st.write("Get post recommendations, word cloud, and similarity score.")
+
+    # User input for name
+    user_name = st.text_input("Enter a valid user name:")
 
     # Choose file mode: default CSV or upload your own CSV
     file_mode = st.selectbox("Choose file mode:", ("Default CSV", "Upload your own CSV"))
 
     if file_mode == "Default CSV":
         df = load_default_data()
-        if 'df' in locals() and 'df' in globals():
-            # User input for name
-            user_name = st.selectbox("Select a user name:", df['name'].unique())
 
-            if st.button("Recommend"):
-                post_embeddings = preprocess_data(df)
-                recommendations = recommend_posts(user_name, post_embeddings, n=10)
-                recommended_post_content = recommendations[0]['content'].values.tolist()
-                wordcloud_text = ' '.join(recommended_post_content)
-                wordcloud = WordCloud(width=800, height=400, background_color='white').generate(wordcloud_text)
+        if st.button("Recommend"):
+            post_embeddings = preprocess_data(df)
+            recommendations = recommend_posts(user_name, post_embeddings, n=10)
+            recommended_post_content = recommendations[0]['content'].values.tolist()
+            wordcloud_text = ' '.join(recommended_post_content)
+            wordcloud = WordCloud(width=800, height=400, background_color='white').generate(wordcloud_text)
 
-                model_name = 'roberta-base'
-                tokenizer = RobertaTokenizer.from_pretrained(model_name)
-                model = RobertaModel.from_pretrained(model_name)
+            model_name = 'roberta-base'
+            tokenizer = RobertaTokenizer.from_pretrained(model_name)
+            model = RobertaModel.from_pretrained(model_name)
 
-                nlp = spacy.load("en_core_web_sm")
+            nlp = spacy.load("en_core_web_sm")
 
-                user_interests = df[df['name'] == user_name]['content'].apply(extract_interests).explode().value_counts()
-                user_interests = user_interests[user_interests.index != ''].index.str.strip().tolist()[:10]
+            user_interests = df[df['name'] == user_name]['content'].apply(extract_interests).explode().value_counts()
+            user_interests = user_interests[user_interests.index != ''].index.str.strip().tolist()[:10]
 
-                recommended_interests = recommendations[0]['content'].apply(extract_interests).explode().value_counts()
-                recommended_interests = recommended_interests[recommended_interests.index != ''].index.str.strip().tolist()[:10]
+            recommended_interests = recommendations[0]['content'].apply(extract_interests).explode().value_counts()
+            recommended_interests = recommended_interests[
+                recommended_interests.index != ''].index.str.strip().tolist()[:10]
 
-                user_interests_encoded = tokenizer.batch_encode_plus(user_interests, padding=True, truncation=True,
-                                                                      return_tensors='pt')
-                user_interest_embeddings = model(**user_interests_encoded)['last_hidden_state'].mean(dim=1).detach().numpy()
+            user_interests_encoded = tokenizer.batch_encode_plus(user_interests, padding=True, truncation=True,
+                                                                  return_tensors='pt')
+            user_interest_embeddings = model(**user_interests_encoded)['last_hidden_state'].mean(dim=1).detach().numpy()
 
-                recommended_interests_encoded = tokenizer.batch_encode_plus(recommended_interests, padding=True,
-                                                                            truncation=True, return_tensors='pt')
-                recommended_interest_embeddings = model(**recommended_interests_encoded)['last_hidden_state'].mean(dim=1).detach().numpy()
+            recommended_interests_encoded = tokenizer.batch_encode_plus(recommended_interests, padding=True,
+                                                                        truncation=True, return_tensors='pt')
+            recommended_interest_embeddings = model(**recommended_interests_encoded)['last_hidden_state'].mean(dim=1).detach().numpy()
 
-                similarities = cosine_similarity(user_interest_embeddings, recommended_interest_embeddings)
-                overall_similarity = np.mean(similarities) * 100
+            similarities = cosine_similarity(user_interest_embeddings, recommended_interest_embeddings)
+            overall_similarity = np.mean(similarities) * 100
 
-                st.subheader(f"Recommended posts for {user_name}:")
-                st.write(recommendations)
+            st.subheader(f"Recommended posts for {user_name}:")
+            st.write(recommendations[0])
 
-                st.subheader(f"Word Cloud of Recommended Posts for {user_name}:")
-                plt.figure(figsize=(10, 5))
-                plt.imshow(wordcloud, interpolation='bilinear')
-                plt.axis('off')
-                plt.title(f"Word Cloud of Recommended Posts for {user_name}")
-                st.pyplot()
+            st.subheader(f"Word Cloud of Recommended Posts for {user_name}:")
+            plt.figure(figsize=(10, 5))
+            plt.imshow(wordcloud, interpolation='bilinear')
+            plt.axis('off')
+            plt.title(f"Word Cloud of Recommended Posts for {user_name}")
+            st.pyplot()
 
-                st.subheader(f"Similarity Score:")
-                st.write(f"Overall similarity between user interests and recommended interests: {overall_similarity:.2f}%")
+            st.subheader(f"Similarity Score:")
+            st.write(f"Overall similarity between user interests and recommended interests: {overall_similarity:.2f}%")
 
     elif file_mode == "Upload your own CSV":
         uploaded_file = st.file_uploader("Upload CSV file", type="csv")
         if uploaded_file is not None:
-            df = pd.read_csv(uploaded_file, engine="python")
-            df = df.dropna()
-            df = df.reset_index()
-
-            # User input for name
-            user_name = st.text_input("Enter a valid user name:")
+            df = load_user_data(uploaded_file)
 
             if st.button("Recommend"):
                 post_embeddings = preprocess_data(df)
@@ -175,7 +183,8 @@ def main():
                 user_interests = user_interests[user_interests.index != ''].index.str.strip().tolist()[:10]
 
                 recommended_interests = recommendations[0]['content'].apply(extract_interests).explode().value_counts()
-                recommended_interests = recommended_interests[recommended_interests.index != ''].index.str.strip().tolist()[:10]
+                recommended_interests = recommended_interests[
+                    recommended_interests.index != ''].index.str.strip().tolist()[:10]
 
                 user_interests_encoded = tokenizer.batch_encode_plus(user_interests, padding=True, truncation=True,
                                                                       return_tensors='pt')
@@ -189,7 +198,7 @@ def main():
                 overall_similarity = np.mean(similarities) * 100
 
                 st.subheader(f"Recommended posts for {user_name}:")
-                st.write(recommendations)
+                st.write(recommendations[0])
 
                 st.subheader(f"Word Cloud of Recommended Posts for {user_name}:")
                 plt.figure(figsize=(10, 5))
