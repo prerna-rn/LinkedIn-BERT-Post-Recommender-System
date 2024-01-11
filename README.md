@@ -15,3 +15,4 @@ Screenshot of the application for user 2: Richard Branson
 
 ⚠️ Disclaimer: The application will suggest posts only for the users whose names are present in the dataset. Refer the csv file. The app will take some time to load the recommendations.
 
+This code is supplement to my research paper on the same. Access here -https://ieeexplore.ieee.org/document/10307957
